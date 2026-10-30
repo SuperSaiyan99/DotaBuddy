@@ -1,0 +1,1109 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent !important;
+  font-family: 'Nunito Sans', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  color: rgba(241, 245, 249, 0.82);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#overlay-viewport {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.overlay-hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   A. Stream MMR & Win/Loss Tracker / In-Game HUD Rank Widget
+   ========================================================================== */
+#mmr-tracker {
+  position: absolute;
+  top: 10px;
+  left: 355px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  padding: 0 12px;
+  background: rgba(13, 17, 23, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #f1f5f9;
+  opacity: 0.8;
+  transition: left 0.2s ease, top 0.2s ease, bottom 0.2s ease, opacity 0.2s ease;
+}
+
+#mmr-tracker.in-game-pos {
+  top: auto;
+  bottom: 28px;
+  left: 1115px;
+  width: 275px;
+  min-width: 275px;
+  height: auto;
+  min-height: 36px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+#mmr-tracker .rank-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+#mmr-tracker.in-game-pos .rank-badge-wrap {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  transform: none;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 2px auto;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95));
+}
+
+.rank-badge-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.rank-badge-svg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rank-badge-svg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.mmr-tracker-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+#mmr-tracker.in-game-pos .mmr-tracker-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+#mmr-tracker .mmr-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.85);
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+  flex-shrink: 0;
+}
+
+#mmr-tracker.in-game-pos .mmr-dot {
+  display: none;
+}
+
+#mmr-tracker-text {
+  white-space: nowrap;
+  font-weight: 400;
+  color: #f1f5f9;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+#mmr-tracker.in-game-pos #mmr-tracker-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.mmr-record {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #f1f5f9;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+}
+
+.mmr-win-text {
+  color: #4ade80 !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.6), 0 2px 4px rgba(0, 0, 0, 0.95) !important;
+}
+
+.mmr-loss-text {
+  color: #f87171 !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  text-shadow: 0 0 8px rgba(248, 113, 113, 0.6), 0 2px 4px rgba(0, 0, 0, 0.95) !important;
+}
+
+.mmr-val-highlight {
+  color: #ffffff;
+  font-weight: 800;
+  font-family: 'Nunito Sans', 'Inter', monospace, sans-serif;
+  letter-spacing: 0.04em;
+  font-size: 16px;
+  min-width: 80px;
+  text-align: center;
+  display: inline-block;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+}
+
+/* ==========================================================================
+   B1. Aegis Timer (Below Top HUD Hero Portrait — Transparent Icon + Timer)
+   ========================================================================== */
+#aegis-timer {
+  position: absolute;
+  top: 44px;
+  left: 506px;
+  width: 60px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  opacity: 0.88;
+  transition: left 0.2s ease, opacity 0.2s ease;
+}
+
+.aegis-icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+#aegis-time-text {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: rgba(254, 249, 195, 0.82);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
+  line-height: 1.1;
+}
+
+/* ==========================================================================
+   B2. Roshan Respawn Timer (Near Minimap — Transparent Ring + Icon + Timer)
+   ========================================================================== */
+#roshan-timer {
+  position: absolute;
+  bottom: 155px;
+  left: 256px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0;
+  box-shadow: none !important;
+  opacity: 0.86;
+  transition: left 0.2s ease, right 0.2s ease, bottom 0.2s ease, opacity 0.2s ease;
+}
+
+#roshan-timer.roshan-red,
+#roshan-timer.roshan-yellow {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.roshan-ring-wrap {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.55));
+}
+
+.roshan-ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 40px;
+  height: 40px;
+  transform: rotate(-90deg);
+}
+
+.roshan-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 2.6;
+}
+
+#roshan-ring-progress {
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s linear, stroke 0.25s ease;
+}
+
+#roshan-timer.roshan-red #roshan-ring-progress {
+  stroke: rgba(248, 113, 113, 0.82);
+}
+
+#roshan-timer.roshan-yellow #roshan-ring-progress {
+  stroke: rgba(250, 204, 21, 0.85);
+}
+
+.roshan-icon {
+  width: 22px;
+  height: 22px;
+  z-index: 1;
+  opacity: 0.9;
+}
+
+#roshan-time-text {
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(241, 245, 249, 0.82);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
+  line-height: 1.1;
+}
+
+#roshan-timer.roshan-red #roshan-time-text {
+  color: rgba(254, 202, 202, 0.84);
+}
+
+#roshan-timer.roshan-yellow #roshan-time-text {
+  color: rgba(254, 240, 138, 0.86);
+}
+
+/* ==========================================================================
+   C. Queue Blocker (Main Menu Bottom-Right Anti-Sniping)
+   ========================================================================== */
+#queue-blocker {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  width: 352px;
+  height: 86px;
+  z-index: 80;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
+}
+
+.queue-finding-banner {
+  width: 100%;
+  height: 100%;
+  background: #0f1722 !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+}
+
+.queue-finding-left {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.queue-finding-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.queue-spinner {
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid rgba(125, 211, 252, 0.25);
+  border-top-color: rgba(125, 211, 252, 0.8);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.queue-finding-title {
+  font-size: 13.5px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(224, 242, 254, 0.82);
+}
+
+#queue-custom-text {
+  font-size: 11.5px;
+  font-weight: 400;
+  color: rgba(147, 197, 253, 0.72);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 265px;
+}
+
+.queue-cancel-fake {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(127, 29, 29, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(252, 165, 165, 0.75);
+  font-size: 12px;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.queue-solid-mask {
+  width: 100%;
+  height: 100%;
+  background: #0c1017 !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.queue-solid-title {
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: rgba(203, 213, 225, 0.8);
+  text-transform: uppercase;
+}
+
+.queue-solid-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(148, 163, 184, 0.68);
+}
+
+/* ==========================================================================
+   D. Hero Pick Blocker (Draft Phase Anti-Sniping)
+   ========================================================================== */
+#hero-pick-blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 75;
+  pointer-events: none;
+}
+
+.draft-team-row {
+  position: absolute;
+  top: 0;
+  height: 76px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  justify-content: space-between !important;
+  gap: 3px;
+  background: #0b0f17;
+  opacity: 1 !important;
+  border-radius: 0 0 6px 6px;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+#draft-radiant-slots {
+  left: 468px;
+  width: 352px;
+}
+
+#draft-dire-slots {
+  left: 1100px;
+  width: 352px;
+}
+
+.draft-slot {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: #0e131b !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 0 0 4px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  transition: opacity 0.25s ease;
+  overflow: hidden;
+  user-select: none;
+}
+
+.draft-slot.slot-revealed {
+  opacity: 0 !important;
+}
+
+.draft-slot-emblem {
+  width: 22px;
+  height: 22px;
+  opacity: 0.4;
+}
+
+.draft-slot-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(203, 213, 225, 0.85);
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+#draft-minimap-mask {
+  position: absolute;
+  left: 22px;
+  bottom: 22px;
+  width: 274px;
+  height: 268px;
+  background: #0d1219 !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+}
+
+#draft-choose-hero-mask {
+  position: absolute;
+  top: 148px;
+  right: 26px;
+  width: 420px;
+  height: 595px;
+  background: #0d1219 !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+}
+
+.draft-mask-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(200, 155, 60, 0.1);
+  border: 1px solid rgba(200, 155, 60, 0.28);
+  color: rgba(226, 184, 87, 0.82);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.draft-mask-title {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: rgba(226, 232, 240, 0.82);
+  text-transform: uppercase;
+}
+
+.draft-mask-sub {
+  font-size: 11.5px;
+  font-weight: 400;
+  color: rgba(148, 163, 184, 0.72);
+  text-align: center;
+  max-width: 280px;
+}
+
+/* ==========================================================================
+   E. Minimap Ward Blocker (In-Game Anti-Sniping)
+   ========================================================================== */
+#minimap-blocker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 244px;
+  height: 244px;
+  z-index: 65;
+  overflow: hidden;
+  border: 1px solid rgba(45, 55, 72, 0.65);
+  pointer-events: none;
+  transition: width 0.15s ease, height 0.15s ease, left 0.15s ease, right 0.15s ease, bottom 0.15s ease, opacity 0.15s ease;
+}
+
+.minimap-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.minimap-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   F. Drag-and-Drop Layout Editor & HUD Guide
+   ========================================================================== */
+#overlay-viewport.edit-mode-active {
+  pointer-events: auto !important;
+}
+
+#overlay-viewport.edit-mode-active,
+#overlay-viewport.hud-guide-active,
+#overlay-viewport.has-reference-backdrop {
+  background-image: url('/images/sample_dota_scene.png') !important;
+  background-size: 1920px 1080px !important;
+  background-position: 0 0 !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Ensure .overlay-hidden always hides completely */
+#overlay-viewport .overlay-hidden {
+  display: none !important;
+}
+
+/* Edit Mode widget grab cursor and interaction */
+#overlay-viewport.edit-mode-active .edit-widget-active {
+  pointer-events: auto !important;
+  cursor: grab !important;
+}
+
+/* In-game scene edit mode: 10 Aegis slots */
+#overlay-viewport.edit-mode-active.scene-in_game #aegis-all-slots {
+  display: block !important;
+  pointer-events: none !important;
+}
+
+#overlay-viewport.edit-mode-active.scene-in_game .aegis-slot-item {
+  display: flex !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+}
+
+/* Drafting scenes edit mode: masks */
+#overlay-viewport.edit-mode-active.scene-drafting_phase #hero-pick-blocker,
+#overlay-viewport.edit-mode-active.scene-draft_own_hero_locked #hero-pick-blocker {
+  display: block !important;
+  pointer-events: none !important;
+}
+
+#overlay-viewport.edit-mode-active.scene-drafting_phase .draft-team-row,
+#overlay-viewport.edit-mode-active.scene-draft_own_hero_locked .draft-team-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+}
+
+#overlay-viewport.edit-mode-active.scene-drafting_phase #draft-minimap-mask,
+#overlay-viewport.edit-mode-active.scene-drafting_phase #draft-choose-hero-mask,
+#overlay-viewport.edit-mode-active.scene-draft_own_hero_locked #draft-minimap-mask,
+#overlay-viewport.edit-mode-active.scene-draft_own_hero_locked #draft-choose-hero-mask {
+  display: flex !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+}
+
+/* When dragging or selected */
+.edit-widget-active {
+  outline: 2px dashed rgba(56, 189, 248, 0.85) !important;
+  border-radius: 4px;
+  transition: none !important;
+}
+
+.edit-widget-active.is-dragging {
+  cursor: grabbing !important;
+  outline: 2px solid #38bdf8 !important;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.6) !important;
+  z-index: 999 !important;
+  transition: none !important;
+}
+
+.edit-widget-active.is-selected {
+  outline: 2px solid #f59e0b !important;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.65) !important;
+  z-index: 998 !important;
+  transition: none !important;
+}
+
+/* Widget Label & Live Coordinate Badge */
+.widget-label-badge {
+  position: absolute;
+  top: -26px;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid rgba(56, 189, 248, 0.7);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Nunito Sans', 'Inter', monospace, sans-serif;
+  color: #38bdf8;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.03em;
+}
+
+.widget-label-badge.badge-bottom {
+  top: auto;
+  bottom: -26px;
+}
+
+.widget-label-badge.badge-right {
+  left: auto;
+  right: 0;
+}
+
+.is-selected .widget-label-badge {
+  background: rgba(24, 18, 10, 0.96);
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+.widget-badge-coords {
+  color: #e2e8f0;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.is-selected .widget-badge-coords {
+  color: #fef08a;
+}
+
+/* HUD Guide & Alignment Backdrop */
+#overlay-hud-guide,
+#hud-guide,
+.hud-guide,
+.overlay-hud-guide,
+.overlay-hud-guide-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  pointer-events: none;
+  background-size: 1920px 1080px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+
+#overlay-viewport.hud-guide-active .hud-guide,
+#overlay-viewport.hud-guide-active .overlay-hud-guide,
+#overlay-viewport.hud-guide-active .overlay-hud-guide-backdrop,
+#overlay-viewport.edit-mode-active .hud-guide,
+#overlay-viewport.edit-mode-active .overlay-hud-guide,
+#overlay-viewport.has-reference-backdrop {
+  background-image: url('/images/sample_dota_scene.png');
+}
+
+.hud-guide {
+  z-index: 50;
+  background-color: rgba(10, 15, 26, 0.45);
+}
+
+.hud-guide-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Floating Edit Layout Toolbar */
+.overlay-edit-toolbar {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+  cursor: grab;
+  cursor: move;
+}
+
+.overlay-edit-toolbar.is-dragging {
+  cursor: grabbing !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85), 0 0 14px rgba(56, 189, 248, 0.4);
+  border-color: rgba(56, 189, 248, 0.6);
+  opacity: 1 !important;
+}
+
+.overlay-edit-toolbar.is-dragging * {
+  cursor: grabbing !important;
+}
+
+.overlay-edit-toolbar.is-dragging button,
+.overlay-edit-toolbar.is-dragging .toolbar-btn,
+.overlay-edit-toolbar.is-dragging .scene-tab-btn {
+  pointer-events: none !important;
+}
+
+body.toolbar-dragging-active,
+body.toolbar-dragging-active * {
+  user-select: none !important;
+  cursor: grabbing !important;
+}
+
+.overlay-edit-toolbar:hover,
+#overlay-viewport.edit-mode-active .overlay-edit-toolbar {
+  opacity: 1 !important;
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+  cursor: grab;
+  cursor: move;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.toolbar-brand:hover {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.toolbar-brand:active,
+.overlay-edit-toolbar.is-dragging .toolbar-brand {
+  cursor: grabbing !important;
+}
+
+.toolbar-grip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  user-select: none;
+  margin-right: 1px;
+}
+
+.toolbar-brand:hover .toolbar-grip {
+  color: #38bdf8;
+}
+
+.toolbar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+}
+
+#overlay-viewport.edit-mode-active .toolbar-dot {
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+.toolbar-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 5px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(30, 41, 59, 0.8);
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.toolbar-btn:hover {
+  background: rgba(51, 65, 85, 0.9);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #38bdf8;
+}
+
+.toolbar-btn.toolbar-btn-active {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+  color: #4ade80;
+}
+
+.toolbar-status {
+  font-size: 10.5px;
+  font-family: monospace;
+  color: #94a3b8;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Multi-Scene Layout Editor Backdrops & Tabs
+   ========================================================================== */
+#overlay-viewport.scene-main_menu.has-reference-backdrop,
+#overlay-viewport.scene-main_menu.hud-guide-active .hud-guide,
+#overlay-viewport.scene-main_menu.edit-mode-active .hud-guide {
+  background-image: url('/images/sample_dota_scene_main_menu.png') !important;
+}
+
+#overlay-viewport.scene-drafting_phase.has-reference-backdrop,
+#overlay-viewport.scene-drafting_phase.hud-guide-active .hud-guide,
+#overlay-viewport.scene-draft_phase.edit-mode-active .hud-guide {
+  background-image: url('/images/sample_dota_scene_drafting_phase.png') !important;
+}
+
+#overlay-viewport.scene-draft_own_hero_locked.has-reference-backdrop,
+#overlay-viewport.scene-draft_own_hero_locked.hud-guide-active .hud-guide,
+#overlay-viewport.scene-draft_own_hero_locked.edit-mode-active .hud-guide {
+  background-image: url('/images/sample_dota_scene_draft_own_hero_locked.png') !important;
+}
+
+#overlay-viewport.scene-in_game.has-reference-backdrop,
+#overlay-viewport.scene-in_game.hud-guide-active .hud-guide,
+#overlay-viewport.scene-in_game.edit-mode-active .hud-guide {
+  background-image: url('/images/sample_dota_scene_in_game.png') !important;
+}
+
+.toolbar-scene-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(10, 15, 26, 0.7);
+  padding: 2px 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.scene-tab-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.scene-tab-btn:hover {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.scene-tab-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 10 Aegis Slots Container & Items */
+#aegis-all-slots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 70;
+}
+
+.aegis-slot-item {
+  position: absolute;
+  width: 60px;
+  height: 46px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.aegis-slot-item .aegis-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.aegis-slot-item .aegis-slot-time {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: monospace;
+  color: #fef08a;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.aegis-slot-tag {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 0 4px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+
+.aegis-slot-radiant .aegis-slot-tag {
+  background: rgba(34, 197, 94, 0.85);
+  color: #ffffff;
+}
+
+.aegis-slot-dire .aegis-slot-tag {
+  background: rgba(239, 68, 68, 0.85);
+  color: #ffffff;
+}
+
+/* Resize Handle for Draggable & Resizable Elements */
+.widget-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+  z-index: 100;
+  display: none;
+}
+
+.widget-resize-handle::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #38bdf8;
+  border-bottom: 2px solid #38bdf8;
+}
+
+#overlay-viewport.edit-mode-active .widget-resize-handle {
+  display: block;
+}
+
+/* Draggable Mask Badges & Visibility Toggles */
+.widget-visibility-btn {
+  cursor: pointer;
+  margin-left: 6px;
+  font-size: 11px;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0 2px;
+  pointer-events: auto !important;
+  user-select: none;
+  opacity: 0.9;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+
+.widget-visibility-btn:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.widget-hidden-dimmed {
+  opacity: 0.3 !important;
+  outline: 2px dashed #f59e0b !important;
+  filter: grayscale(80%);
+}

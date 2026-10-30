@@ -1,0 +1,25 @@
+{
+  "name": "dotabuddy-overlay",
+  "version": "1.0.0",
+  "description": "Self-hosted Dota 2 Stream Overlay & Anti-Stream-Sniping Web Application for OBS Studio",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "setup-gsi": "node setup-gsi.js",
+    "test": "node --test test/app.test.js"
+  },
+  "keywords": [
+    "dota2",
+    "gsi",
+    "obs",
+    "overlay",
+    "stream",
+    "anti-snipe",
+    "dotabod"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}

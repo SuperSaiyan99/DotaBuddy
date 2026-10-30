@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DotaBuddy — Stream Overlay &amp; Anti-Sniping</title>
+  <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+<body>
+  <div class="dash-container">
+
+    <!-- Top Navigation Header -->
+    <header class="dash-header">
+      <div class="flex items-center gap-3">
+        <div class="brand-badge">DB</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm font-semibold text-white tracking-tight">DotaBuddy Pro</h1>
+            <span class="badge-subtle">Overlay</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Automated Stream Overlay &amp; Anti-Sniping</p>
+        </div>
+      </div>
+
+      <!-- Live Connection Status & Prominent OBS Link -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <!-- Game Connection Badge -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-xs">
+          <span id="gsi-status-dot" class="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0"></span>
+          <div class="flex items-center gap-2">
+            <span id="gsi-friendly-status" class="font-medium text-slate-200 text-xs">Waiting for Dota 2</span>
+            <span class="text-slate-600">·</span>
+            <span id="gsi-status-text" class="font-mono text-slate-400 text-xs font-medium">WAITING FOR DOTA 2 GSI</span>
+            <span class="text-slate-600">·</span>
+            <span id="gsi-friendly-phase" class="text-slate-300 text-xs font-medium">Main Menu</span>
+            <span id="gsi-gamestate-badge" class="font-mono text-slate-500 text-xs">DOTA_GAMERULES_STATE_INIT</span>
+          </div>
+        </div>
+
+        <!-- OBS Browser Source Copy Card -->
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-md px-3 py-1.5 text-xs">
+          <span class="text-slate-400 font-medium">OBS URL:</span>
+          <code id="obs-url-code" class="text-slate-200 font-mono text-xs">http://localhost:3000/overlay</code>
+          <button id="btn-copy-obs-url" class="btn btn-secondary !py-0.5 !px-2.5 !text-xs font-medium" type="button" title="Copy OBS Browser Source URL">
+            Copy
+          </button>
+          <a href="/overlay" target="_blank" class="btn btn-slate !py-0.5 !px-2 !text-xs text-slate-400 hover:text-white" title="Open overlay in new tab">
+            Open ↗
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- 3-Step Streamer Setup Guide -->
+    <section class="quick-start-box mb-4" data-testid="streamer-quickstart">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-400">
+        <div class="flex items-center gap-2.5">
+          <div class="step-badge">1</div>
+          <div><span class="text-slate-200 font-medium">Copy OBS Link</span> — Paste into OBS as a Browser Source.</div>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <div class="step-badge">2</div>
+          <div><span class="text-slate-200 font-medium">Set 1920×1080</span> — Use 1920 width and 1080 height in OBS.</div>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <div class="step-badge">3</div>
+          <div><span class="text-slate-200 font-medium">Launch Dota 2</span> — Overlay automates shields &amp; boss timers.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stream Testing & Preview Controls Bar -->
+    <section class="card-panel mb-4" data-testid="diagnostics-bar">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+        <div class="flex items-center gap-2">
+          <h2 class="card-title">Stream Testing &amp; Preview Controls</h2>
+          <span class="text-xs text-slate-500 font-normal">Simulation Mode</span>
+        </div>
+        <div>
+          <span id="sim-toast" class="text-emerald-400 font-medium text-xs"></span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <!-- Group 1: Game Phases -->
+        <div class="flex flex-wrap items-center gap-1.5 p-1 rounded bg-slate-950 border border-slate-800">
+          <button id="sim-main-menu" data-testid="sim-main-menu" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Simulate Main Menu</button>
+          <button id="sim-wait-load" data-testid="sim-wait-load" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Connecting</button>
+          <button id="sim-draft" data-testid="sim-draft" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Draft Phase</button>
+          <button id="sim-draft-reveal" data-testid="sim-draft-reveal" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Hero Locked</button>
+          <button id="sim-strategy" data-testid="sim-strategy" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Strategy Time</button>
+          <button id="sim-in-game" data-testid="sim-in-game" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">In-Game</button>
+        </div>
+
+        <!-- Group 2: Boss Timers -->
+        <div class="flex flex-wrap items-center gap-1.5 p-1 rounded bg-slate-950 border border-slate-800">
+          <button id="sim-aegis" data-testid="sim-aegis" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Aegis (5:00)</button>
+          <button id="sim-roshan" data-testid="sim-roshan" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Roshan (11:00 Red)</button>
+          <button id="sim-roshan-yellow" data-testid="sim-roshan-yellow" class="btn btn-slate !py-1 !px-2 !text-xs" type="button">Roshan (2:55 Yellow)</button>
+        </div>
+
+        <!-- Group 3: Match Outcomes -->
+        <div class="flex flex-wrap items-center gap-1.5 p-1 rounded bg-slate-950 border border-slate-800">
+          <button id="sim-win" data-testid="sim-win" class="btn btn-emerald !py-1 !px-2 !text-xs font-medium" type="button">Match Win (+MMR)</button>
+          <button id="sim-loss" data-testid="sim-loss" class="btn btn-rose !py-1 !px-2 !text-xs font-medium" type="button">Match Loss (-MMR)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Layout (7 Cols Left: Controls / 5 Cols Right: Monitor & Setup) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- Left Column: Controls (7 cols) -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+
+        <!-- A. Stream Rank & MMR Tracker -->
+        <section class="card-panel" data-testid="card-mmr-tracker">
+          <div class="card-panel-header">
+            <div>
+              <div class="card-title">Stream Rank &amp; MMR Tracker</div>
+              <p class="card-desc">Displays live rank medal, MMR value, and session W/L on stream.</p>
+            </div>
+            <label class="toggle-switch" title="Enable stream MMR tracker">
+              <input type="checkbox" id="mmr-enabled" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <!-- Live Top-Bar Preview -->
+          <div class="mb-3 p-2.5 rounded bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-slate-400">Rank:</span>
+              <span id="dash-rank-name" class="font-semibold text-white">Calculating...</span>
+              <span id="dash-rank-bracket" class="text-slate-500 font-mono text-xs"></span>
+            </div>
+            <div id="dash-mmr-preview-box" class="inline-flex items-center gap-2 px-3 py-1 rounded bg-slate-900 border border-slate-800 text-xs text-slate-100">
+              <div id="dash-rank-badge" class="w-4 h-4 flex items-center justify-center flex-shrink-0"></div>
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span id="dash-mmr-preview">STREAM | 0W - 0L | 7,455 MMR</span>
+            </div>
+          </div>
+
+          <!-- MMR Configuration Inputs -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mmr-label">Prefix Label</label>
+              <input id="mmr-label" type="text" maxlength="24" class="dota-input" value="STREAM" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mmr-starting">Starting MMR</label>
+              <input id="mmr-starting" type="number" min="0" step="1" class="dota-input font-mono" value="7455" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mmr-current">Current MMR</label>
+              <input id="mmr-current" type="number" min="0" step="1" class="dota-input font-mono" value="7455" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mmr-step">MMR Step</label>
+              <input id="mmr-step" type="number" min="1" step="1" class="dota-input font-mono" value="25" />
+            </div>
+          </div>
+
+          <!-- Session Wins / Losses & Adjust Buttons -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mmr-wins">Session Wins</label>
+              <input id="mmr-wins" type="number" min="0" step="1" class="dota-input font-mono" value="0" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mmr-losses">Session Losses</label>
+              <input id="mmr-losses" type="number" min="0" step="1" class="dota-input font-mono" value="0" />
+            </div>
+            <div class="flex items-end">
+              <button id="btn-mmr-win" class="btn btn-emerald w-full" type="button">+1 Win</button>
+            </div>
+            <div class="flex items-end">
+              <button id="btn-mmr-loss" class="btn btn-rose w-full" type="button">+1 Loss</button>
+            </div>
+          </div>
+
+          <!-- Opacity and HUD Placement -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 pt-2.5 border-t border-slate-800">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs text-slate-400" for="mmr-opacity">Overlay Opacity</label>
+                <span id="mmr-opacity-val" class="text-xs font-mono font-medium text-slate-300">80%</span>
+              </div>
+              <input id="mmr-opacity" type="range" min="20" max="100" value="80" class="dota-slider" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mmr-position">Screen Placement</label>
+              <select id="mmr-position" class="dota-input">
+                <option value="bottom_hud">Bottom HUD (Left of Gold)</option>
+                <option value="top_bar">Top Bar</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Rank Info Catalog Status -->
+          <div class="mb-3 p-2 rounded bg-slate-950 border border-slate-800 text-xs flex items-center justify-between">
+            <span class="text-slate-400">Rank Medal Status:</span>
+            <span id="rank-catalog-count" class="font-mono text-slate-300">SVG Medal Active</span>
+          </div>
+
+          <!-- Visibility Toggles & Reset -->
+          <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2.5 border-t border-slate-800 text-xs">
+            <div class="flex flex-wrap items-center gap-3">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer text-slate-300">
+                <input type="checkbox" id="mmr-show-menu" checked />
+                <span>Show in Menu</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer text-slate-300">
+                <input type="checkbox" id="mmr-show-ingame" checked />
+                <span>Show In-Game</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer text-slate-300">
+                <input type="checkbox" id="mmr-auto-gsi" checked />
+                <span>Auto-Update via GSI</span>
+              </label>
+            </div>
+            <button id="btn-mmr-reset" class="btn btn-slate !py-1 !px-2.5" type="button">Reset Session</button>
+          </div>
+        </section>
+
+        <!-- B. Boss Timers -->
+        <section class="card-panel" data-testid="card-timers">
+          <div class="card-panel-header">
+            <div>
+              <div class="card-title">Boss Timers (Aegis &amp; Roshan)</div>
+              <p class="card-desc">Aegis and Roshan timers automatically trigger during matches.</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="text-slate-400">Aegis</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="timers-aegis-enabled" checked />
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="text-slate-400 ml-2">Roshan</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="timers-roshan-enabled" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Aegis Sub-Card -->
+            <div class="p-3 rounded bg-slate-950 border border-slate-800 flex flex-col justify-between gap-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-white">Aegis Timer (5:00)</span>
+                <span id="dash-aegis-status" class="text-xs font-mono text-slate-400">INACTIVE</span>
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1" for="timers-hero-slot">Hero Slot:</label>
+                <select id="timers-hero-slot" class="dota-input">
+                  <option value="0">Slot 1 — Radiant Blue</option>
+                  <option value="1">Slot 2 — Radiant Teal</option>
+                  <option value="2">Slot 3 — Radiant Purple</option>
+                  <option value="3">Slot 4 — Radiant Yellow</option>
+                  <option value="4">Slot 5 — Radiant Orange</option>
+                  <option value="5">Slot 6 — Dire Pink</option>
+                  <option value="6">Slot 7 — Dire Olive</option>
+                  <option value="7">Slot 8 — Dire Light Blue</option>
+                  <option value="8">Slot 9 — Dire Dark Green</option>
+                  <option value="9">Slot 10 — Dire Brown</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-2">
+                <button id="btn-start-aegis" class="btn btn-secondary flex-1" type="button" title="Start Aegis (Alt+A)">Start Aegis [Alt+A]</button>
+                <button id="btn-stop-aegis" class="btn btn-slate" type="button">Reset</button>
+              </div>
+            </div>
+
+            <!-- Roshan Sub-Card -->
+            <div class="p-3 rounded bg-slate-950 border border-slate-800 flex flex-col justify-between gap-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-white">Roshan Timer (8:00–11:00)</span>
+                <span id="dash-roshan-status" class="text-xs font-mono text-slate-400">INACTIVE</span>
+              </div>
+              <p class="text-xs text-slate-400">Auto-starts on Aegis pickup or use hotkey [Alt+R].</p>
+              <div class="flex items-center gap-2">
+                <button id="btn-start-roshan" class="btn btn-secondary flex-1" type="button" title="Roshan Killed (Alt+R)">Roshan [Alt+R]</button>
+                <button id="btn-yellow-roshan" class="btn btn-secondary" type="button" title="3:00 Window (Alt+Y)">3:00 Window</button>
+                <button id="btn-stop-roshan" class="btn btn-slate" type="button">Reset</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- C. Main Menu Queue Blocker -->
+        <section class="card-panel" data-testid="card-queue-blocker">
+          <div class="card-panel-header">
+            <div>
+              <div class="card-title">Menu Queue Blocker</div>
+              <p class="card-desc">Covers "PLAY DOTA" in Main Menu to prevent match queue sniping.</p>
+            </div>
+            <label class="toggle-switch" title="Enable queue blocker">
+              <input type="checkbox" id="qb-enabled" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+            <div class="feature-toggle-card">
+              <div>
+                <div class="text-xs font-medium text-slate-200">Show Finding Match Mock</div>
+                <div class="text-xs text-slate-400">Static "FINDING MATCH" banner</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="qb-show-finding" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs text-slate-400" for="qb-custom-text">Custom Queue Text</label>
+                <span id="qb-char-count" class="text-xs font-mono text-slate-500">33/45</span>
+              </div>
+              <input id="qb-custom-text" type="text" maxlength="45" class="dota-input" placeholder="Ranked match / All pick / SE Asia" value="Ranked match / All pick / SE Asia" />
+            </div>
+          </div>
+        </section>
+
+        <!-- D. Hero Pick Blocker -->
+        <section class="card-panel" data-testid="card-hero-pick-blocker">
+          <div class="card-panel-header">
+            <div>
+              <div class="card-title">Draft Phase Hero Pick Blocker</div>
+              <p class="card-desc">Masks hero cards during draft to prevent counter-picks.</p>
+            </div>
+            <label class="toggle-switch" title="Enable Hero Pick Blocker">
+              <input type="checkbox" id="hpb-enabled" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 text-xs">
+            <label class="feature-toggle-card cursor-pointer">
+              <span class="text-slate-300">Mask 10 Hero Slots</span>
+              <input type="checkbox" id="hpb-top-slots" checked />
+            </label>
+            <label class="feature-toggle-card cursor-pointer">
+              <span class="text-slate-300">Mask Draft Minimap</span>
+              <input type="checkbox" id="hpb-minimap" checked />
+            </label>
+            <label class="feature-toggle-card cursor-pointer">
+              <span class="text-slate-300">Mask Choose Hero Box</span>
+              <input type="checkbox" id="hpb-choose-box" checked />
+            </label>
+            <label class="feature-toggle-card cursor-pointer">
+              <span class="text-slate-300">Smart Reveal: Own Hero</span>
+              <input type="checkbox" id="hpb-reveal-own" checked />
+            </label>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-slate-800 text-xs">
+            <label class="text-slate-400" for="hpb-streamer-slot">Streamer Draft Slot:</label>
+            <select id="hpb-streamer-slot" class="dota-input !w-48">
+              <option value="0">Slot 1 (Radiant 1)</option>
+              <option value="1">Slot 2 (Radiant 2)</option>
+              <option value="2">Slot 3 (Radiant 3)</option>
+              <option value="3">Slot 4 (Radiant 4)</option>
+              <option value="4">Slot 5 (Radiant 5)</option>
+              <option value="5">Slot 6 (Dire 1)</option>
+              <option value="6">Slot 7 (Dire 2)</option>
+              <option value="7">Slot 8 (Dire 3)</option>
+              <option value="8">Slot 9 (Dire 4)</option>
+              <option value="9">Slot 10 (Dire 5)</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- E. Minimap Ward Blocker -->
+        <section class="card-panel" data-testid="card-minimap-blocker">
+          <div class="card-panel-header">
+            <div>
+              <div class="card-title">Minimap Ward Blocker</div>
+              <p class="card-desc">Hides ward placements from stream snipers while in-game.</p>
+            </div>
+            <label class="toggle-switch" title="Enable minimap blocker">
+              <input type="checkbox" id="mm-enabled" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1" for="mm-style">Minimap Style</label>
+              <select id="mm-style" class="dota-input">
+                <option value="realistic">Realistic map overlay (map_overlay.png)</option>
+                <option value="complex">Complex minimap background</option>
+                <option value="simple">Simple minimap background</option>
+              </select>
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs text-slate-400" for="mm-intensity">Blocker Opacity</label>
+                <span id="mm-intensity-val" class="text-xs font-mono font-medium text-slate-300">75%</span>
+              </div>
+              <input id="mm-intensity" type="range" min="0" max="100" value="75" class="dota-slider" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+            <label class="feature-toggle-card cursor-pointer">
+              <span class="text-slate-300">Extra Large (280px)</span>
+              <input type="checkbox" id="mm-extralarge" />
+            </label>
+            <label class="feature-toggle-card cursor-pointer">
+              <span class="text-slate-300">Right Side Minimap</span>
+              <input type="checkbox" id="mm-rightside" />
+            </label>
+            <label class="feature-toggle-card cursor-pointer">
+              <span class="text-slate-300">HUD Offset</span>
+              <input type="checkbox" id="mm-bp-offset" />
+            </label>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Monitor & Setup (5 cols) -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+
+        <!-- Live 1920x1080 Overlay Monitor -->
+        <section class="card-panel">
+          <div class="card-panel-header">
+            <div>
+              <div class="card-title">Live 1920×1080 Monitor</div>
+              <p class="card-desc">Real-time mirror of OBS Browser Source.</p>
+            </div>
+          </div>
+
+          <!-- Scene Switcher Tabs (4 Scenes) -->
+          <div id="dash-scene-tabs-bar" class="flex flex-wrap items-center gap-1 mb-2.5 p-1 rounded bg-slate-950 border border-slate-800 text-xs" data-testid="dash-scene-tabs-bar">
+            <span class="text-xs text-slate-500 px-1 font-medium">Scene:</span>
+            <button type="button" class="dash-scene-tab active" data-scene="in_game">In-Game</button>
+            <button type="button" class="dash-scene-tab" data-scene="main_menu">Main Menu</button>
+            <button type="button" class="dash-scene-tab" data-scene="drafting_phase">Drafting Phase</button>
+            <button type="button" class="dash-scene-tab" data-scene="draft_own_hero_locked">Hero Locked</button>
+            <button id="dash-btn-align-aegis" type="button" class="ml-auto btn btn-slate !py-0.5 !px-2 !text-xs" title="Auto-align spacing for 10 Aegis slot timers">
+              Align Aegis
+            </button>
+          </div>
+
+          <!-- Drag-and-Drop Layout Editor Controls -->
+          <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2.5 p-2 rounded bg-slate-950 border border-slate-800 text-xs">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button id="btn-edit-layout" data-testid="btn-edit-layout" type="button" class="btn btn-amber !py-1 !px-2.5 !text-xs font-medium">
+                <span>Edit Layout</span>
+              </button>
+              <button id="btn-reset-positions" data-testid="btn-reset-positions" type="button" class="btn btn-slate !py-1 !px-2.5 !text-xs">
+                <span>Reset Defaults</span>
+              </button>
+              <button id="btn-toggle-hud-guide" data-testid="btn-toggle-hud-guide" type="button" class="btn btn-slate !py-1 !px-2.5 !text-xs">
+                <span>HUD Guide: OFF</span>
+              </button>
+            </div>
+            <div id="layout-editor-hint" class="text-xs text-slate-500 hidden sm:inline-block">
+              Drag widgets • Arrows: 1px • Shift: 10px
+            </div>
+          </div>
+
+          <!-- Preview Stage Iframe -->
+          <div class="preview-stage-wrapper">
+            <iframe id="overlay-preview-iframe" src="/overlay" title="Live OBS Overlay Preview" loading="lazy"></iframe>
+          </div>
+        </section>
+
+        <!-- 1-Click Dota 2 Game Setup -->
+        <section class="card-panel" data-testid="card-gsi-installer">
+          <div class="card-panel-header">
+            <div>
+              <div class="card-title">1-Click Dota 2 Game Setup</div>
+              <p class="card-desc">Installs Game State Integration config file for live sync.</p>
+            </div>
+            <span id="gsi-cfg-status-badge" class="badge-friendly">CHECKING...</span>
+          </div>
+
+          <div class="mb-3 p-2.5 rounded bg-slate-950 border border-slate-800 text-xs text-slate-400">
+            Restart Dota 2 once after installing config if the game was already running.
+          </div>
+
+          <div class="mb-3">
+            <label class="block text-xs text-slate-400 mb-1" for="gsi-dota-path">
+              Dota 2 Folder Path (Auto-detected if empty):
+            </label>
+            <input id="gsi-dota-path" type="text" class="dota-input font-mono !text-xs" placeholder="Auto-detected: C:\Program Files (x86)\Steam\steamapps\common\dota 2 beta" />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <button id="btn-install-gsi" data-testid="btn-install-gsi" class="btn btn-amber flex-1 font-medium" type="button">
+              Generate &amp; Install GSI Config
+            </button>
+            <a href="/api/gsi/download" class="btn btn-slate" download="gamestate_integration_localoverlay.cfg">
+              Download .cfg
+            </a>
+          </div>
+
+          <div id="gsi-install-result" class="hidden mb-3 p-2.5 rounded bg-slate-950 border border-emerald-500/30 text-xs text-emerald-400 font-mono break-all"></div>
+
+          <!-- Config File Preview -->
+          <details class="dota-details">
+            <summary>Advanced: View Config Details</summary>
+            <div class="mt-2">
+              <pre id="gsi-cfg-preview" class="p-2.5 rounded bg-slate-950 border border-slate-800 text-xs text-slate-400 font-mono overflow-x-auto">"DotaBuddy Local Stream Overlay Configuration"
+{
+    "uri"               "http://127.0.0.1:3000/gsi"
+    "timeout"           "5.0"
+    "buffer"            "0.1"
+    "throttle"          "0.1"
+    "heartbeat"         "10.0"
+    "data"
+    {
+        "buildings"     "1"
+        "provider"      "1"
+        "map"           "1"
+        "player"        "1"
+        "hero"          "1"
+        "abilities"     "1"
+        "items"         "1"
+        "draft"         "1"
+        "wearables"     "1"
+        "minimap"       "1"
+        "roshan"        "1"
+        "events"        "1"
+    }
+}</pre>
+            </div>
+          </details>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

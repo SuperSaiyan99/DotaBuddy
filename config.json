@@ -1,0 +1,268 @@
+{
+  "mmrTracker": {
+    "enabled": true,
+    "showInMenu": true,
+    "showInGame": true,
+    "autoTrackGsi": true,
+    "label": "STREAM",
+    "startingMmr": 2415,
+    "currentMmr": 2517,
+    "mmrStep": 25,
+    "wins": 0,
+    "losses": 0,
+    "showRankIcon": true,
+    "opacity": 90,
+    "inGamePosition": "bottom_hud"
+  },
+  "timers": {
+    "aegisEnabled": true,
+    "roshanEnabled": true,
+    "aegisDurationSec": 300,
+    "roshanMinSec": 480,
+    "roshanMaxSec": 660,
+    "defaultHeroSlot": 5
+  },
+  "queueBlocker": {
+    "enabled": true,
+    "showFindingMatch": true,
+    "customText": "Ranked match / All pick / SE Asia"
+  },
+  "heroPickBlocker": {
+    "enabled": true,
+    "blockTopSlots": true,
+    "blockMinimapPreview": true,
+    "blockChooseHeroBox": true,
+    "revealOwnHero": true,
+    "streamerSlot": 0
+  },
+  "minimapBlocker": {
+    "enabled": true,
+    "style": "realistic",
+    "extraLarge": false,
+    "rightSide": false,
+    "battlepassOffset": true,
+    "customOffsetX": 0,
+    "customOffsetY": 0,
+    "intensity": 87
+  },
+  "gsi": {
+    "dotaPath": "",
+    "lastRecordedMatchId": null
+  },
+  "customPositions": {
+    "mmrTracker": {
+      "x": 1383,
+      "y": 998
+    },
+    "aegisTimer": null,
+    "roshanTimer": {
+      "x": 250,
+      "y": 871
+    },
+    "minimapBlocker": {
+      "x": 4,
+      "y": 841
+    },
+    "queueBlocker": {
+      "x": 1486,
+      "y": 988
+    }
+  },
+  "sceneLayouts": {
+    "main_menu": {
+      "backdrop": "/images/sample_dota_scene_main_menu.png",
+      "widgets": {
+        "mmrTracker": {
+          "x": 1183,
+          "y": 14,
+          "width": 328,
+          "height": 35,
+          "visible": true
+        },
+        "queueBlocker": {
+          "x": 1486,
+          "y": 988,
+          "width": 422,
+          "height": 74,
+          "visible": true
+        }
+      }
+    },
+    "drafting_phase": {
+      "backdrop": "/images/sample_dota_scene_drafting_phase.png",
+      "widgets": {
+        "draftRadiantSlots": {
+          "x": 212,
+          "y": 7,
+          "width": 615,
+          "height": 66,
+          "visible": true
+        },
+        "draftDireSlots": {
+          "x": 1077,
+          "y": 2,
+          "width": 628,
+          "height": 70,
+          "visible": true
+        },
+        "draftMinimapMask": {
+          "x": 105,
+          "y": 869,
+          "width": 336,
+          "height": 197,
+          "visible": true
+        },
+        "draftChooseHeroMask": {
+          "x": 1346,
+          "y": 183,
+          "width": 374,
+          "height": 602,
+          "visible": true
+        },
+        "mmrTracker": {
+          "x": 474,
+          "y": 1018,
+          "width": 338,
+          "height": 34,
+          "visible": false
+        }
+      }
+    },
+    "draft_own_hero_locked": {
+      "backdrop": "/images/sample_dota_scene_draft_own_hero_locked.png",
+      "widgets": {
+        "draftRadiantSlots": {
+          "x": 213,
+          "y": 0,
+          "width": 612,
+          "height": 75,
+          "visible": true
+        },
+        "draftDireSlots": {
+          "x": 1100,
+          "y": 0,
+          "width": 607,
+          "height": 74,
+          "visible": true
+        },
+        "draftMinimapMask": {
+          "x": 840,
+          "y": 169,
+          "width": 885,
+          "height": 897,
+          "visible": true
+        },
+        "draftChooseHeroMask": {
+          "x": 13,
+          "y": 130,
+          "width": 813,
+          "height": 879,
+          "visible": true
+        },
+        "mmrTracker": {
+          "x": 355,
+          "y": 10,
+          "width": 275,
+          "height": 34,
+          "visible": false
+        }
+      }
+    },
+    "in_game": {
+      "backdrop": "/images/sample_dota_scene_in_game.png",
+      "widgets": {
+        "mmrTracker": {
+          "x": 1383,
+          "y": 998,
+          "width": 275,
+          "height": 36,
+          "visible": true
+        },
+        "roshanTimer": {
+          "x": 250,
+          "y": 871,
+          "width": 60,
+          "height": 60,
+          "visible": true
+        },
+        "minimapBlocker": {
+          "x": 4,
+          "y": 841,
+          "width": 237,
+          "height": 238,
+          "visible": true
+        },
+        "aegisSlot0": {
+          "x": 550,
+          "y": 44,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot1": {
+          "x": 614,
+          "y": 44,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot2": {
+          "x": 677,
+          "y": 44,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot3": {
+          "x": 741,
+          "y": 44,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot4": {
+          "x": 804,
+          "y": 44,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot5": {
+          "x": 1068,
+          "y": 50,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot6": {
+          "x": 1130,
+          "y": 50,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot7": {
+          "x": 1192,
+          "y": 50,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot8": {
+          "x": 1253,
+          "y": 50,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        },
+        "aegisSlot9": {
+          "x": 1315,
+          "y": 50,
+          "width": 60,
+          "height": 46,
+          "visible": true
+        }
+      }
+    }
+  }
+}

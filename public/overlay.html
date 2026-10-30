@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0" />
+  <title>DotaBuddy OBS Overlay (1920x1080)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/overlay.css" />
+</head>
+<body>
+  <div id="overlay-viewport">
+    <!-- A. Stream MMR & Win/Loss Tracker / In-Game HUD Rank Widget -->
+    <div id="mmr-tracker" data-testid="mmr-tracker">
+      <div id="rank-badge-wrap" class="rank-badge-wrap">
+        <img id="rank-badge-img" class="rank-badge-img overlay-hidden" src="" alt="Rank Medal" />
+        <div id="rank-badge-svg" class="rank-badge-svg"></div>
+      </div>
+      <div class="mmr-tracker-content">
+        <span class="mmr-dot"></span>
+        <span id="mmr-tracker-text">STREAM | 0W - 0L | 7,455 MMR</span>
+      </div>
+    </div>
+
+    <!-- B1. Aegis Countdown Timer (Directly below hero portrait on top HUD bar — Transparent Icon + Timer) -->
+    <div id="aegis-timer" class="overlay-hidden" data-testid="aegis-timer">
+      <svg class="aegis-icon" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="aegisGoldRim" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fef08a" />
+            <stop offset="45%" stop-color="#eab308" />
+            <stop offset="100%" stop-color="#a16207" />
+          </linearGradient>
+          <radialGradient id="aegisCrimsonCore" cx="50%" cy="42%" r="55%">
+            <stop offset="0%" stop-color="#dc2626" />
+            <stop offset="60%" stop-color="#991b1b" />
+            <stop offset="100%" stop-color="#450a0a" />
+          </radialGradient>
+        </defs>
+        <path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="url(#aegisCrimsonCore)" stroke="url(#aegisGoldRim)" stroke-width="1.8" stroke-linejoin="round" />
+        <path d="M18 6.2L9.4 9.5C9.9 16.5 13 22.8 18 27.9C23 22.8 26.1 16.5 26.6 9.5L18 6.2Z" fill="#7f1d1d" fill-opacity="0.65" stroke="#fde047" stroke-opacity="0.7" stroke-width="1" />
+        <path d="M11.5 13.5L18 10L24.5 13.5L18 23.5L11.5 13.5Z" fill="#b91c1c" stroke="#fef08a" stroke-opacity="0.85" stroke-width="1" stroke-linejoin="round" />
+        <circle cx="18" cy="15.2" r="2.6" fill="#fef08a" fill-opacity="0.92" />
+      </svg>
+      <span id="aegis-time-text">5:00</span>
+    </div>
+
+    <!-- B1b. All 10 Aegis Slot Timers (Simultaneously displayed in Edit Mode for individual slot dragging) -->
+    <div id="aegis-all-slots" class="overlay-hidden" data-testid="aegis-all-slots">
+      <div id="aegis-slot-0" class="aegis-slot-item aegis-slot-radiant" data-slot="0" data-testid="aegis-slot-0" style="left: 550px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">R1</span>
+      </div>
+      <div id="aegis-slot-1" class="aegis-slot-item aegis-slot-radiant" data-slot="1" data-testid="aegis-slot-1" style="left: 614px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">R2</span>
+      </div>
+      <div id="aegis-slot-2" class="aegis-slot-item aegis-slot-radiant" data-slot="2" data-testid="aegis-slot-2" style="left: 678px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">R3</span>
+      </div>
+      <div id="aegis-slot-3" class="aegis-slot-item aegis-slot-radiant" data-slot="3" data-testid="aegis-slot-3" style="left: 742px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">R4</span>
+      </div>
+      <div id="aegis-slot-4" class="aegis-slot-item aegis-slot-radiant" data-slot="4" data-testid="aegis-slot-4" style="left: 806px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">R5</span>
+      </div>
+      <div id="aegis-slot-5" class="aegis-slot-item aegis-slot-dire" data-slot="5" data-testid="aegis-slot-5" style="left: 1104px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">D1</span>
+      </div>
+      <div id="aegis-slot-6" class="aegis-slot-item aegis-slot-dire" data-slot="6" data-testid="aegis-slot-6" style="left: 1166px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">D2</span>
+      </div>
+      <div id="aegis-slot-7" class="aegis-slot-item aegis-slot-dire" data-slot="7" data-testid="aegis-slot-7" style="left: 1228px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">D3</span>
+      </div>
+      <div id="aegis-slot-8" class="aegis-slot-item aegis-slot-dire" data-slot="8" data-testid="aegis-slot-8" style="left: 1290px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">D4</span>
+      </div>
+      <div id="aegis-slot-9" class="aegis-slot-item aegis-slot-dire" data-slot="9" data-testid="aegis-slot-9" style="left: 1352px; top: 44px;">
+        <svg class="aegis-icon" viewBox="0 0 36 36" fill="none"><path d="M18 2.5L6.5 6.8C5.8 7.1 5.3 7.8 5.4 8.6C5.8 17.8 9.9 26.2 18 32.8C26.1 26.2 30.2 17.8 30.6 8.6C30.7 7.8 30.2 7.1 29.5 6.8L18 2.5Z" fill="#dc2626" stroke="#fef08a" stroke-width="1.8"/></svg>
+        <span class="aegis-slot-time">5:00</span>
+        <span class="aegis-slot-tag">D5</span>
+      </div>
+    </div>
+
+    <!-- B2. Roshan Respawn Timer (Near bottom-left/right minimap — Transparent Circular Ring + Icon + Timer) -->
+    <div id="roshan-timer" class="overlay-hidden roshan-red" data-testid="roshan-timer">
+      <div class="roshan-ring-wrap">
+        <svg class="roshan-ring-svg" viewBox="0 0 44 44" aria-hidden="true">
+          <circle class="roshan-ring-bg" cx="22" cy="22" r="18"></circle>
+          <circle id="roshan-ring-progress" cx="22" cy="22" r="18" stroke-dasharray="113.097" stroke-dashoffset="0"></circle>
+        </svg>
+        <svg class="roshan-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 8L8 4L12 6L16 4L20 8L18 17L12 21L6 17L4 8Z" fill="#334155" fill-opacity="0.82" stroke="#e2e8f0" stroke-opacity="0.8" stroke-width="1.3" stroke-linejoin="round"/>
+          <circle cx="9" cy="11" r="1.5" fill="#ef4444" fill-opacity="0.85" id="roshan-eye-left"/>
+          <circle cx="15" cy="11" r="1.5" fill="#ef4444" fill-opacity="0.85" id="roshan-eye-right"/>
+          <path d="M9 15.5L12 14L15 15.5" stroke="#cbd5e1" stroke-opacity="0.75" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span id="roshan-time-text">11:00</span>
+    </div>
+
+    <!-- C. Queue Blocker (Main Menu Bottom-Right Anti-Sniping) -->
+    <div id="queue-blocker" class="overlay-hidden" data-testid="queue-blocker">
+      <div id="queue-finding-view" class="queue-finding-banner">
+        <div class="queue-finding-left">
+          <div class="queue-finding-title-row">
+            <span class="queue-spinner"></span>
+            <span class="queue-finding-title">FINDING MATCH</span>
+          </div>
+          <div id="queue-custom-text">Ranked match / All pick / SE Asia</div>
+        </div>
+        <div class="queue-cancel-fake" title="Queue Hidden">✕</div>
+      </div>
+      <div id="queue-solid-view" class="queue-solid-mask overlay-hidden">
+        <div class="queue-solid-title">QUEUE PROTECTED</div>
+        <div class="queue-solid-sub">Anti-Stream-Sniping Active</div>
+      </div>
+    </div>
+
+    <!-- D. Hero Pick Blocker (Draft Phase Anti-Sniping) -->
+    <div id="hero-pick-blocker" class="overlay-hidden" data-testid="hero-pick-blocker">
+      <!-- Top Radiant 5-Player Hero Pick Slots (Slots 0..4) -->
+      <div id="draft-radiant-slots" class="draft-team-row">
+        <div class="draft-slot" data-slot="0"><span class="draft-slot-label">RADIANT 1</span></div>
+        <div class="draft-slot" data-slot="1"><span class="draft-slot-label">RADIANT 2</span></div>
+        <div class="draft-slot" data-slot="2"><span class="draft-slot-label">RADIANT 3</span></div>
+        <div class="draft-slot" data-slot="3"><span class="draft-slot-label">RADIANT 4</span></div>
+        <div class="draft-slot" data-slot="4"><span class="draft-slot-label">RADIANT 5</span></div>
+      </div>
+
+      <!-- Top Dire 5-Player Hero Pick Slots (Slots 5..9) -->
+      <div id="draft-dire-slots" class="draft-team-row">
+        <div class="draft-slot" data-slot="5"><span class="draft-slot-label">DIRE 1</span></div>
+        <div class="draft-slot" data-slot="6"><span class="draft-slot-label">DIRE 2</span></div>
+        <div class="draft-slot" data-slot="7"><span class="draft-slot-label">DIRE 3</span></div>
+        <div class="draft-slot" data-slot="8"><span class="draft-slot-label">DIRE 4</span></div>
+        <div class="draft-slot" data-slot="9"><span class="draft-slot-label">DIRE 5</span></div>
+      </div>
+
+      <!-- Bottom-Left Draft Minimap Preview Mask -->
+      <div id="draft-minimap-mask">
+        <span class="draft-mask-badge">DRAFT SHIELD</span>
+        <span class="draft-mask-title">MINIMAP HIDDEN</span>
+        <span class="draft-mask-sub">Lane assignments concealed during Hero Selection</span>
+      </div>
+
+      <!-- Right-Side "CHOOSE YOUR HERO" Portrait Box Mask -->
+      <div id="draft-choose-hero-mask">
+        <span class="draft-mask-badge" id="draft-phase-status-badge">BANNING / PICKING PHASE</span>
+        <span class="draft-mask-title">HERO SELECTION HIDDEN</span>
+        <span class="draft-mask-sub">Automatically clears when Strategy Phase begins</span>
+      </div>
+    </div>
+
+    <!-- E. Minimap Ward Blocker (In-Game Anti-Sniping) -->
+    <div id="minimap-blocker" class="overlay-hidden" data-testid="minimap-blocker">
+      <!-- Realistic Map Overlay Image -->
+      <img id="minimap-image" src="/images/map_overlay.png" alt="Minimap Realistic Overlay" class="minimap-img" />
+
+      <!-- Complex Textured Terrain Anti-Ward Minimap Mask -->
+      <svg id="minimap-svg-complex" class="minimap-svg" viewBox="0 0 244 244" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="terrainComplexGrad" x1="0" y1="244" x2="244" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1b3022" />
+            <stop offset="46%" stop-color="#223629" />
+            <stop offset="50%" stop-color="#173742" />
+            <stop offset="54%" stop-color="#2c2423" />
+            <stop offset="100%" stop-color="#271d1c" />
+          </linearGradient>
+          <radialGradient id="wardSpotMask" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1e293b" stop-opacity="0.98"/>
+            <stop offset="75%" stop-color="#0f172a" stop-opacity="0.92"/>
+            <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Terrain Base (semi-transparent so hero icons shine through while ward dots blend into masks) -->
+        <rect width="244" height="244" fill="url(#terrainComplexGrad)" fill-opacity="0.58" />
+        <!-- River Fag -->
+        <path d="M 18 42 Q 78 96 122 122 T 226 204" stroke="#164e63" stroke-width="18" fill="none" stroke-linecap="round" opacity="0.72"/>
+        <!-- Top, Mid, Bot Lanes -->
+        <path d="M 20 224 L 20 24 L 220 24" stroke="#57534e" stroke-width="7" fill="none" opacity="0.55"/>
+        <path d="M 24 224 L 224 224 L 224 24" stroke="#57534e" stroke-width="7" fill="none" opacity="0.55"/>
+        <path d="M 24 220 L 220 24" stroke="#57534e" stroke-width="7" fill="none" opacity="0.55"/>
+        <!-- Roshan Pit Indicators -->
+        <circle cx="82" cy="88" r="10" fill="#3f2e21" opacity="0.78" />
+        <circle cx="162" cy="156" r="10" fill="#3f2e21" opacity="0.78" />
+        <!-- Anti-Ward Cliff & Jungle Eye Masks (Conceals Observer/Sentry wards & camp spawn boxes) -->
+        <g fill="#1c2732" stroke="#334155" stroke-width="1.2" opacity="0.95">
+          <!-- Radiant Jungle & River Cliffs -->
+          <circle cx="62" cy="164" r="9" />
+          <circle cx="102" cy="152" r="9" />
+          <circle cx="138" cy="176" r="9" />
+          <circle cx="168" cy="196" r="8" />
+          <circle cx="48" cy="116" r="8" />
+          <circle cx="96" cy="128" r="8" />
+          <!-- Dire Jungle & River Cliffs -->
+          <circle cx="182" cy="80" r="9" />
+          <circle cx="142" cy="92" r="9" />
+          <circle cx="106" cy="68" r="9" />
+          <circle cx="76" cy="48" r="8" />
+          <circle cx="196" cy="128" r="8" />
+          <circle cx="148" cy="116" r="8" />
+          <!-- Mid & Side Lane Ward Spots -->
+          <circle cx="110" cy="134" r="7.5" />
+          <circle cx="134" cy="110" r="7.5" />
+          <circle cx="34" cy="82" r="7.5" />
+          <circle cx="210" cy="162" r="7.5" />
+          <circle cx="82" cy="210" r="7.5" />
+          <circle cx="162" cy="34" r="7.5" />
+          <!-- Neutral Camp Masks -->
+          <rect x="74" y="176" width="12" height="10" rx="2" />
+          <rect x="116" y="188" width="12" height="10" rx="2" />
+          <rect x="150" y="156" width="12" height="10" rx="2" />
+          <rect x="158" y="56" width="12" height="10" rx="2" />
+          <rect x="116" y="46" width="12" height="10" rx="2" />
+          <rect x="82" y="78" width="12" height="10" rx="2" />
+        </g>
+      </svg>
+
+      <!-- Simple Tactical Anti-Ward Minimap Mask -->
+      <svg id="minimap-svg-simple" class="minimap-svg overlay-hidden" viewBox="0 0 244 244" xmlns="http://www.w3.org/2000/svg">
+        <rect width="244" height="244" fill="#0b1320" fill-opacity="0.68" />
+        <!-- River -->
+        <path d="M 16 40 Q 80 98 122 122 T 228 204" stroke="#0ea5e9" stroke-opacity="0.28" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <!-- Tactical Grid & Lanes -->
+        <path d="M 18 226 L 18 18 L 226 18" stroke="#334155" stroke-width="5" fill="none" opacity="0.65"/>
+        <path d="M 18 226 L 226 226 L 226 18" stroke="#334155" stroke-width="5" fill="none" opacity="0.65"/>
+        <path d="M 18 226 L 226 18" stroke="#334155" stroke-width="5" fill="none" opacity="0.65"/>
+        <!-- Anti-Ward Masks -->
+        <g fill="#0f172a" stroke="#1e293b" stroke-width="1.5" opacity="0.96">
+          <circle cx="62" cy="164" r="9.5" />
+          <circle cx="102" cy="152" r="9.5" />
+          <circle cx="138" cy="176" r="9.5" />
+          <circle cx="168" cy="196" r="8.5" />
+          <circle cx="48" cy="116" r="8.5" />
+          <circle cx="96" cy="128" r="8.5" />
+          <circle cx="182" cy="80" r="9.5" />
+          <circle cx="142" cy="92" r="9.5" />
+          <circle cx="106" cy="68" r="9.5" />
+          <circle cx="76" cy="48" r="8.5" />
+          <circle cx="196" cy="128" r="8.5" />
+          <circle cx="148" cy="116" r="8.5" />
+          <circle cx="110" cy="134" r="8" />
+          <circle cx="134" cy="110" r="8" />
+          <circle cx="34" cy="82" r="8" />
+          <circle cx="210" cy="162" r="8" />
+          <circle cx="82" cy="210" r="8" />
+          <circle cx="162" cy="34" r="8" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- F. Semi-Transparent Dota 2 HUD Alignment Background Guide -->
+    <div id="hud-guide" class="hud-guide overlay-hud-guide overlay-hidden" data-testid="overlay-hud-guide" aria-hidden="true">
+      <div id="overlay-hud-guide" class="overlay-hud-guide-backdrop" aria-hidden="true"></div>
+      <svg class="hud-guide-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="guideGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1" />
+          </pattern>
+        </defs>
+        <!-- Background Grid -->
+        <rect width="1920" height="1080" fill="url(#guideGrid)" />
+
+        <!-- Screen Center Crosshair -->
+        <line x1="960" y1="0" x2="960" y2="1080" stroke="rgba(56, 189, 248, 0.25)" stroke-dasharray="4 4" stroke-width="1" />
+        <line x1="0" y1="540" x2="1920" y2="540" stroke="rgba(56, 189, 248, 0.25)" stroke-dasharray="4 4" stroke-width="1" />
+
+        <!-- Top Bar: Clock / Score Area -->
+        <rect x="880" y="0" width="160" height="44" fill="rgba(15, 23, 42, 0.4)" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3" />
+        <text x="960" y="27" fill="#38bdf8" font-size="11" font-family="monospace" text-anchor="middle">TOP CLOCK (960, 0)</text>
+
+        <!-- Top Bar: Radiant Portraits -->
+        <rect x="550" y="0" width="320" height="44" fill="rgba(34, 197, 94, 0.12)" stroke="#22c55e" stroke-width="1" stroke-dasharray="3 3" />
+        <text x="710" y="27" fill="#4ade80" font-size="11" font-family="monospace" text-anchor="middle">RADIANT PORTRAITS (550..870)</text>
+
+        <!-- Top Bar: Dire Portraits -->
+        <rect x="1050" y="0" width="320" height="44" fill="rgba(239, 68, 68, 0.12)" stroke="#ef4444" stroke-width="1" stroke-dasharray="3 3" />
+        <text x="1210" y="27" fill="#f87171" font-size="11" font-family="monospace" text-anchor="middle">DIRE PORTRAITS (1050..1370)</text>
+
+        <!-- Minimap Area Standard (244x244) -->
+        <rect x="0" y="836" width="244" height="244" fill="rgba(168, 85, 247, 0.15)" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4 4" />
+        <text x="122" y="960" fill="#e9d5ff" font-size="12" font-family="monospace" text-anchor="middle">MINIMAP ZONE (244×244)</text>
+
+        <!-- Minimap Area Extra Large (280x280) -->
+        <rect x="0" y="800" width="280" height="280" fill="none" stroke="rgba(192, 132, 252, 0.5)" stroke-width="1" stroke-dasharray="2 4" />
+        <text x="140" y="820" fill="rgba(233, 213, 255, 0.65)" font-size="10" font-family="monospace" text-anchor="middle">XL MINIMAP (280×280)</text>
+
+        <!-- Bottom Center HUD: Hero Abilities & Inventory -->
+        <rect x="520" y="860" width="880" height="220" fill="rgba(30, 41, 59, 0.35)" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4" />
+        <text x="960" y="975" fill="#cbd5e1" font-size="13" font-family="monospace" text-anchor="middle">DOTA 2 HERO HUD &amp; ABILITIES ZONE</text>
+
+        <!-- In-game MMR Tracker target zone -->
+        <rect x="1115" y="995" width="275" height="36" fill="rgba(245, 158, 11, 0.15)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2 2" />
+        <text x="1252" y="1018" fill="#fcd34d" font-size="10" font-family="monospace" text-anchor="middle">MMR TRACKER DEFAULT (1115, 995)</text>
+
+        <!-- Bottom-Right: Queue / Play Button Area -->
+        <rect x="1552" y="980" width="352" height="86" fill="rgba(14, 165, 233, 0.15)" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3" />
+        <text x="1728" y="1028" fill="#7dd3fc" font-size="11" font-family="monospace" text-anchor="middle">QUEUE FINDING ZONE (1552, 980)</text>
+      </svg>
+    </div>
+
+    <!-- Floating Edit Layout Toolbar -->
+    <div id="overlay-edit-toolbar" class="overlay-edit-toolbar" data-testid="overlay-edit-toolbar">
+      <div class="toolbar-brand" id="toolbar-drag-handle" title="Click and drag to move toolbar anywhere">
+        <span class="toolbar-grip" aria-hidden="true">⋮⋮</span>
+        <span class="toolbar-dot"></span>
+        <span class="toolbar-title">DotaBuddy Layout</span>
+      </div>
+      <button id="toolbar-btn-edit" class="toolbar-btn" type="button" title="Toggle Drag-and-Drop Edit Mode">
+        ✏️ Edit Layout
+      </button>
+      <div id="toolbar-scene-tabs" class="toolbar-scene-tabs" data-testid="toolbar-scene-tabs">
+        <button class="scene-tab-btn active" data-scene="in_game" type="button">In-Game</button>
+        <button class="scene-tab-btn" data-scene="main_menu" type="button">Main Menu</button>
+        <button class="scene-tab-btn" data-scene="drafting_phase" type="button">Drafting</button>
+        <button class="scene-tab-btn" data-scene="draft_own_hero_locked" type="button">Hero Locked</button>
+      </div>
+      <button id="toolbar-btn-align-aegis" class="toolbar-btn" type="button" title="Auto-align 10 Aegis slot timers spacing across Radiant and Dire">
+        ↔ Auto-Align Aegis
+      </button>
+      <button id="toolbar-btn-guide" class="toolbar-btn" type="button" title="Toggle Dota 2 HUD Alignment Guide">
+        🗺️ HUD Guide
+      </button>
+      <button id="toolbar-btn-dock" class="toolbar-btn" type="button" title="Quickly snap toolbar between Top and Bottom">
+        ⬇ Dock to Bottom
+      </button>
+      <button id="toolbar-btn-reset" class="toolbar-btn" type="button" title="Reset Widget Positions to Default">
+        ↺ Reset Defaults
+      </button>
+      <span id="toolbar-status-text" class="toolbar-status">Overlay Ready</span>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/overlay.js"></script>
+</body>
+</html>
